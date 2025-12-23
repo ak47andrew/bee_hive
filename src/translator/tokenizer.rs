@@ -1,34 +1,74 @@
-use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::fmt::Debug;
 use fancy_regex::Regex;
 use once_cell::sync::Lazy;
 
+#[derive(Debug)]
 pub enum Type {
     Integer,
     String,
     Bool,
     Void,
-    Function {arg_types: Vec<Type>, return_type: Box<Type>}
+    Function {arg_types: Vec<Arguments>, return_type: Box<Type>}
+}
+
+#[derive(Debug)]
+pub struct Arguments {
+    pub available_types: Vec<Type>,
+    pub is_any_amount: bool,
 }
 
 #[derive(Debug)]
 pub enum Expr {
-    Integer {value: u8},
-    String {value: String},
-    Identifier {name: String},
-    FunctionCall {name: String, args: Vec<Expr>},
+    Integer { value: u8 },
+    String { value: String },
+    Identifier { name: String },
+    FunctionCall { name: String, args: Vec<Expr> },
+    Variable { name: String, value: Box<Expr> },
 }
 
-#[derive(Debug)]
-pub enum TokenizerError {
-    UnrecognizedToken(String),
-    IntegerOverflow(String),
+impl Expr {
+    pub fn compare_with_type(&self, other: &Type) -> bool {
+        match self {
+            Expr::Integer { .. } => matches!(other, Type::Integer),
+            Expr::String { .. } => matches!(other, Type::String),
+            Expr::Identifier { .. } => panic!("Why would you need to compare it with a type straight ahead? Resolve it first, you dumbass!"),
+            Expr::FunctionCall { .. } => panic!("Why would you need to compare it with a type straight ahead? Break it down, you dumbass!"),
+            Expr::Variable { .. } => panic!("Why would you need to compare it with a type straight ahead? What did you wanted to get? Something went horribly wrong!"),
+        }
+    }
+
+    pub fn compare_with_types(&self, other: &Vec<Type>) -> bool {
+        match self {
+            Expr::Integer { .. } => {
+                for i in other {
+                    if matches!(i, Type::Integer){
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            Expr::String { .. } => {
+                for i in other {
+                    if matches!(i, Type::String){
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            Expr::Identifier { .. } => panic!("Why would you need to compare it with a type straight ahead? Resolve it first, you dumbass!"),
+            Expr::FunctionCall { .. } => panic!("Why would you need to compare it with a type straight ahead? Break it down, you dumbass!"),
+            Expr::Variable { .. } => panic!("Why would you need to compare it with a type straight ahead? What did you wanted to get? Something went horribly wrong!"),
+        }
+    }
 }
+
 
 pub static INTEGER_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^(\d+)$").unwrap());
 pub static STRING_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r#"^"([^"]*)"$"#).unwrap());
 pub static VARIABLE_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^var\s+(.+)\s*=\s*(.+)$").unwrap());
-pub static OBJECT_CALL_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\s*([\w_]+)\s*\(\s*(.*)\s*\)\s*$").unwrap());
+pub static FUNC_CALL_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\s*([\w_]+)\s*\(\s*(.*)\s*\)\s*$").unwrap());
 
 fn split_args(s: String) -> Vec<String> {
     let escaped_chars = vec!['n'];
@@ -66,21 +106,56 @@ fn split_args(s: String) -> Vec<String> {
     parts
 }
 
-pub fn tokenize(statement: String) -> Result<Expr, TokenizerError> {
+const KEYWORDS: &[&str] = &[
+    "if", "else", "while", "for", "fn", "return", "let", "var",
+];
+
+pub fn is_valid_identifier(s: &str) -> bool {
+    if KEYWORDS.contains(&s) {
+        return false;
+    }
+
+    let mut chars = s.chars();
+
+    let first = match chars.next() {
+        Some(c) => c,
+        None => return false,
+    };
+
+    if !first.is_ascii_alphabetic() && first != '_' {
+        return false;
+    }
+
+    chars.all(|c| c.is_ascii_alphanumeric() || c == '_')
+}
+
+
+pub fn tokenize(statement: String) -> Result<Expr, String> {
     if let Ok(Some(captures)) = INTEGER_REGEX.captures(&statement) {
         return match captures.get(1).unwrap().as_str().parse::<u8>()
         {
             Ok(value) => Ok(Expr::Integer { value }),
-            Err(_) => Err(TokenizerError::IntegerOverflow(statement.clone()))
+            Err(_) => Err(format!("Integer overflow: {}; currently integers are only supported in the 0-255 range", statement))
         };
     }
     if let Ok(Some(captures)) = STRING_REGEX.captures(&statement) {
         return Ok(Expr::String {value: captures.get(1).unwrap().as_str().to_string().replace("\\n", "\n")});
     }
     if let Ok(Some(captures)) = VARIABLE_REGEX.captures(&statement) {
-        return Err(TokenizerError::UnrecognizedToken("variables aren't ready yet, wait a bit pls".to_string()));
+        let name = captures.get(1).unwrap().as_str().strip_suffix(' ').unwrap();
+        if !is_valid_identifier(name) {
+            return Err(format!("variable name {} should be a valid identifier", name));
+        }
+
+        let value = tokenize(captures.get(2).unwrap().as_str().to_string())?;
+        return Ok(Expr::Variable { name: name.to_string(), value: Box::new(value) });
     }
-    if let Ok(Some(captures)) = OBJECT_CALL_REGEX.captures(&statement) {
+    if let Ok(Some(captures)) = FUNC_CALL_REGEX.captures(&statement) {
+        let name = captures.get(1).unwrap().as_str().to_string();
+        if !is_valid_identifier(name.as_str()) {
+            return Err(format!("function name {} should be a valid identifier", name));
+        }
+
         let parsed_args = split_args(captures.get(2).unwrap().as_str().to_string());
         let mut args = vec![];
         for arg in parsed_args {
@@ -90,8 +165,12 @@ pub fn tokenize(statement: String) -> Result<Expr, TokenizerError> {
             }
         }
 
-        return Ok(Expr::FunctionCall {name: captures.get(1).unwrap().as_str().to_string(), args});
+        return Ok(Expr::FunctionCall {name, args});
     }
 
-    Err(TokenizerError::UnrecognizedToken(statement))
+    if !is_valid_identifier(&statement) {
+        Err(format!("Can't parse statement: {}", statement))
+    } else {
+        Ok(Expr::Identifier {name: statement})
+    }
 }
