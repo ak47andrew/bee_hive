@@ -1,95 +1,66 @@
-use std::collections::HashMap;
-use once_cell::sync::Lazy;
 use crate::translator::memory_manager::MemoryManager;
-use crate::translator::tokenizer::{Arguments, Expr, Type};
+use crate::translator::tokenizer::{BasicType, Expr};
+use crate::translator::func_call;
 
 #[allow(non_camel_case_types)]
 #[derive(Debug)]
 pub enum IR {
     MOVE_TO_STACK_FREE,
+    MOVE_TO_STACK_LAST,
     MOVE_TO_HEAP_FREE,
-    MOVE_TO_HEAP_CELL {num: u64},
+    MOVE_TO_HEAP_CELL {num: usize},
     LOAD_IMMEDIATE_STRING {value: String},
     LOAD_IMMEDIATE_INTEGER {value: u8},
     OUTPUT,
     STORE_VARIABLE {name: String},
-    LOAD_VARIABLE {name: String},
-}
-
-pub static FUNCTIONS: Lazy<HashMap<&str, Type>> = Lazy::new(|| HashMap::from([
-        ("print", Type::Function {arg_types: vec![Arguments{
-            available_types: vec![Type::Integer, Type::String],
-            is_any_amount: true
-        }], return_type: Box::new(Type::Void)})
-]));
-
-fn compare_types(arg: &Expr, current_type: &Arguments) -> bool{
-    !arg.compare_with_types(&current_type.available_types)
-}
-
-fn validate_types(statement: &Expr, memory_manager: &mut MemoryManager) -> Result<(), String> {
-    match statement {
-        Expr::FunctionCall {name, args} => {
-            let args_types;
-            match FUNCTIONS.get(name.as_str()) {
-                Some(function_type) => {
-                    match function_type {
-                        Type::Function {arg_types, .. } => {args_types = arg_types;}
-                        _ => unreachable!()
-                    };
-                }
-                None => { return Err(format!("Function {} is not defined", name)) }
-            }
-
-            if args.len() != args_types.len() {
-                return Err(format!("Function {} takes length {}, got {}",
-                                   name, args_types.len(), args.len()));
-            }
-
-            if args.len() == 0 {
-                return Ok(())
-            }
-
-            let current_type = &args_types[0];
-            let type_index = 0;
-            for index in 0..args.len() {
-                let arg = &args[index];
-
-                match arg {
-                    Expr::Integer { .. } => {
-                        if !compare_types(arg, current_type) {
-                            return Err("Error when checking types".to_string());
-                        }
-                    }
-                    Expr::String { .. } => {
-                        if !compare_types(arg, current_type) {
-                            return Err("Error when checking types".to_string());
-                        }
-                    }
-                    Expr::Identifier { name } => {
-                        let var_type = memory_manager.get_variable(name.clone());
-                        
-                        if var_type.is_none() {
-                            return Err(format!("Variable {} not found", name));
-                        }
-                        
-                        if !compare_types(var_type.unwrap().var_type, current_type) {}
-                    }
-                    Expr::FunctionCall { .. } => {}
-                    Expr::Variable { .. } => {}
-                }
-            }
-
-            todo!()
-        }
-        _ => Ok(()),
-    }
+    LOAD_VARIABLE {cell: usize},
 }
 
 fn evaluate(statement: &Expr, memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
-    if !validate_types(statement) {
-        return Err(format!("Type validation failed: {:?}", statement));
-    }
+    match statement {
+        Expr::Integer { value } => {
+            memory_manager.push_int();
+            Ok(vec![
+                IR::MOVE_TO_STACK_FREE,
+                IR::LOAD_IMMEDIATE_INTEGER {value: *value}
+            ])
+        }
+        Expr::String { value } => {
+            memory_manager.push_chars(value.len());
+            Ok(vec![
+                IR::MOVE_TO_STACK_FREE,
+                IR::LOAD_IMMEDIATE_STRING {value: value.to_string()}
+            ])
+        }
+        Expr::VariableName { name } => {
+            let (cell, var_type) = match memory_manager.get_var(name.clone()) {
+                Some(var) => (var.cell, var.var_type),
+                None => return Err(format!("Variable {} not found", name)),
+            };
 
-    todo!()
+            memory_manager.push(var_type);
+            Ok(vec![
+                IR::LOAD_VARIABLE { cell }
+            ])
+        }
+        Expr::FunctionCall { name, args } => {
+            func_call::validate_args(name, args, memory_manager)?;
+
+            for arg in args {
+                evaluate(arg, memory_manager)?;
+            }
+
+            func_call::translate_function_call(name, memory_manager)
+        }
+        Expr::Variable { name, value } => {
+            let mut l = evaluate(value, memory_manager)?;
+            l.append(
+                &mut vec![
+                    IR::MOVE_TO_HEAP_FREE,
+                    IR::STORE_VARIABLE { name: name.to_string() }
+                ]
+            );
+            Ok(l)
+        }
+    }
 }
