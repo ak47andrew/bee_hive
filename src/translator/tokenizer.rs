@@ -2,64 +2,28 @@ use std::fmt::Debug;
 use fancy_regex::Regex;
 use once_cell::sync::Lazy;
 
-#[derive(Debug)]
-pub enum Type {
+
+#[derive(Copy, Clone, PartialEq)]
+pub enum BasicType {
     Integer,
-    String,
-    Bool,
-    Void,
-    Function {arg_types: Vec<Arguments>, return_type: Box<Type>}
+    Char
 }
 
-#[derive(Debug)]
-pub struct Arguments {
-    pub available_types: Vec<Type>,
-    pub is_any_amount: bool,
-}
-
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Expr {
     Integer { value: u8 },
     String { value: String },
-    Identifier { name: String },
+    VariableName { name: String },
     FunctionCall { name: String, args: Vec<Expr> },
     Variable { name: String, value: Box<Expr> },
 }
 
 impl Expr {
-    pub fn compare_with_type(&self, other: &Type) -> bool {
+    pub fn get_type(&self) -> BasicType {
         match self {
-            Expr::Integer { .. } => matches!(other, Type::Integer),
-            Expr::String { .. } => matches!(other, Type::String),
-            Expr::Identifier { .. } => panic!("Why would you need to compare it with a type straight ahead? Resolve it first, you dumbass!"),
-            Expr::FunctionCall { .. } => panic!("Why would you need to compare it with a type straight ahead? Break it down, you dumbass!"),
-            Expr::Variable { .. } => panic!("Why would you need to compare it with a type straight ahead? What did you wanted to get? Something went horribly wrong!"),
-        }
-    }
-
-    pub fn compare_with_types(&self, other: &Vec<Type>) -> bool {
-        match self {
-            Expr::Integer { .. } => {
-                for i in other {
-                    if matches!(i, Type::Integer){
-                        return true;
-                    }
-                }
-
-                return false;
-            },
-            Expr::String { .. } => {
-                for i in other {
-                    if matches!(i, Type::String){
-                        return true;
-                    }
-                }
-
-                return false;
-            },
-            Expr::Identifier { .. } => panic!("Why would you need to compare it with a type straight ahead? Resolve it first, you dumbass!"),
-            Expr::FunctionCall { .. } => panic!("Why would you need to compare it with a type straight ahead? Break it down, you dumbass!"),
-            Expr::Variable { .. } => panic!("Why would you need to compare it with a type straight ahead? What did you wanted to get? Something went horribly wrong!"),
+            Expr::Integer { .. } => { BasicType::Integer }
+            Expr::String { .. } => { BasicType::Char }
+            _ => panic!()
         }
     }
 }
@@ -147,8 +111,14 @@ pub fn tokenize(statement: String) -> Result<Expr, String> {
             return Err(format!("variable name {} should be a valid identifier", name));
         }
 
-        let value = tokenize(captures.get(2).unwrap().as_str().to_string())?;
-        return Ok(Expr::Variable { name: name.to_string(), value: Box::new(value) });
+        let var_value = tokenize(captures.get(2).unwrap().as_str().to_string())?;
+        return match var_value {
+            Expr::Integer { .. } => Ok(Expr::Variable {
+                name: name.to_string(),
+                value: Box::new(var_value)
+            }),
+            _ => Err("Currently only numbers are supported for storing in variables".to_string()),
+        }
     }
     if let Ok(Some(captures)) = FUNC_CALL_REGEX.captures(&statement) {
         let name = captures.get(1).unwrap().as_str().to_string();
@@ -171,6 +141,6 @@ pub fn tokenize(statement: String) -> Result<Expr, String> {
     if !is_valid_identifier(&statement) {
         Err(format!("Can't parse statement: {}", statement))
     } else {
-        Ok(Expr::Identifier {name: statement})
+        Ok(Expr::VariableName {name: statement})
     }
 }

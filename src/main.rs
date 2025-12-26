@@ -30,5 +30,5 @@ fn main() {
     }
 
     // intermediate_language.rs
-    // interpreter.rs
+    // compiler.rs
 }
