@@ -1,5 +1,5 @@
 use crate::translator::memory_manager::MemoryManager;
-use crate::translator::tokenizer::{BasicType, Expr};
+use crate::translator::tokenizer::Expr;
 use crate::translator::func_call;
 
 #[allow(non_camel_case_types)]
@@ -13,7 +13,7 @@ pub enum IR {
     LOAD_IMMEDIATE_INTEGER {value: u8},
     OUTPUT,
     STORE_VARIABLE {name: String},
-    LOAD_VARIABLE {cell: usize},
+    LOAD_VARIABLE {name: String},
 }
 
 fn evaluate(statement: &Expr, memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
@@ -40,7 +40,7 @@ fn evaluate(statement: &Expr, memory_manager: &mut MemoryManager) -> Result<Vec<
 
             memory_manager.push(var_type);
             Ok(vec![
-                IR::LOAD_VARIABLE { cell }
+                IR::LOAD_VARIABLE { name: name.clone() }
             ])
         }
         Expr::FunctionCall { name, args } => {
