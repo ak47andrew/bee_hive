@@ -1,12 +1,15 @@
 use std::fmt::Debug;
 use fancy_regex::Regex;
 use once_cell::sync::Lazy;
-
+use crate::translator::func_call::get_function_symbol;
+use crate::translator::memory_manager::MemoryManager;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum BasicType {
     Integer,
-    Char
+    Char,
+    Any,
+    Void
 }
 
 #[derive(Debug, Clone)]
@@ -19,11 +22,30 @@ pub enum Expr {
 }
 
 impl Expr {
-    pub fn get_type(&self) -> BasicType {
+    pub fn get_type(&self, memory_manager: &MemoryManager) -> Result<BasicType, String> {
         match self {
-            Expr::Integer { .. } => { BasicType::Integer }
-            Expr::String { .. } => { BasicType::Char }
-            _ => panic!()
+            Expr::Integer { .. } => { Ok(BasicType::Integer) }
+            Expr::String { .. } => { Ok(BasicType::Char) }
+            Expr::VariableName { name } => {
+                match memory_manager.get_var(name.clone()) {
+                    None => { Err(format!("Variable '{}' not found", name)) }
+                    Some(value) => { Ok(value.var_type) }
+                }
+            }
+            Expr::FunctionCall { name, .. } => {
+                match get_function_symbol(name.as_str()) {
+                    None => { Err(format!("Function '{}' not found", name)) }
+                    Some(fs) => {
+                        match fs.return_type {
+                            None => { Ok(BasicType::Void) }
+                            Some(ty) => { Ok(ty) }
+                        }
+                    }
+                }
+            }
+            Expr::Variable { .. } => {
+                Err("Are you trying to... assign a variable as an argument? What in hell do you think you're doing???".to_string())
+            }
         }
     }
 }
