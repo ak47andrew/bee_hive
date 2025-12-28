@@ -13,6 +13,13 @@ pub struct MemoryManager {
 }
 
 impl MemoryManager {
+    pub fn new() -> MemoryManager {
+        MemoryManager {
+            variables: HashMap::new(),
+            stack: Vec::new()
+        }
+    }
+
     pub fn get_var(&self, name: String) -> Option<&MemoryManagerVariable> {
         self.variables.get(&name)
     }

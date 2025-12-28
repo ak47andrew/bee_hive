@@ -4,6 +4,8 @@ mod cli;
 use std::process;
 use clap::Parser;
 use crate::cli::Cli;
+use crate::translator::intermediate_language::{evaluate, IR};
+use crate::translator::memory_manager::MemoryManager;
 use crate::translator::tokenizer::{Expr, tokenize};
 
 fn main() {
@@ -19,16 +21,31 @@ fn main() {
         |x| match x {
             Ok(expr) => expr,
             Err(err) => {
-                eprintln!("Tokenizer error: {:?}", err);
+                eprintln!("Tokenizer error: {}", err);
                 process::exit(1);
             }
         }
     ).collect();
 
-    for ast in &asts {
-        println!("{:?}", ast);
+    // intermediate_language.rs
+    let mut memory_manager = MemoryManager::new();
+    let mut IRs: Vec<IR> = Vec::new();
+    for ast in asts {
+        match evaluate(&ast, &mut memory_manager) {
+            Ok(ir) => {
+                IRs.extend(ir);
+            }
+            Err(err) => {
+                eprintln!("IR generator error: {}", err);
+                process::exit(1);
+            }
+        }
+
     }
 
-    // intermediate_language.rs
+    for ir in IRs {
+        println!("{:?}", ir)
+    }
+
     // compiler.rs
 }
