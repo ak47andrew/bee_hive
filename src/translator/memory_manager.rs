@@ -46,4 +46,12 @@ impl MemoryManager {
     pub fn pop(&mut self) -> Option<BasicType> {
         self.stack.pop()
     }
+    
+    pub fn get_len_stack(&self) -> usize {
+        self.stack.len()
+    }
+    
+    pub fn get_len_heap(&self) -> usize {
+        self.variables.len()
+    }
 }

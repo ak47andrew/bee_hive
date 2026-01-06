@@ -18,7 +18,7 @@ pub enum Expr {
     String { value: String },
     VariableName { name: String },
     FunctionCall { name: String, args: Vec<Expr> },
-    Variable { name: String, value: Box<Expr> },
+    VariableAssignment { name: String, value: Box<Expr> },
 }
 
 impl Expr {
@@ -43,7 +43,7 @@ impl Expr {
                     }
                 }
             }
-            Expr::Variable { .. } => {
+                Expr::VariableAssignment { .. } => {
                 Err("Are you trying to... assign a variable as an argument? What in hell do you think you're doing???".to_string())
             }
         }
@@ -93,7 +93,7 @@ fn split_args(s: String) -> Vec<String> {
 }
 
 const KEYWORDS: &[&str] = &[
-    "if", "else", "while", "for", "fn", "return", "let", "var",
+    "if", "else", "while", "for", "fn", "return", "let", "var"
 ];
 
 pub fn is_valid_identifier(s: &str) -> bool {
@@ -135,7 +135,7 @@ pub fn tokenize(statement: String) -> Result<Expr, String> {
 
         let var_value = tokenize(captures.get(2).unwrap().as_str().to_string())?;
         return match var_value {
-            Expr::Integer { .. } => Ok(Expr::Variable {
+            Expr::Integer { .. } => Ok(Expr::VariableAssignment {
                 name: name.to_string(),
                 value: Box::new(var_value)
             }),
