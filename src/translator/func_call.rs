@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use once_cell::sync::Lazy;
-use crate::translator::intermediate_language::IR;
+use crate::translator::intermediate_language::{get_stack_free_index, get_stack_last_index, IR};
 use crate::translator::memory_manager::MemoryManager;
 use crate::translator::tokenizer::{BasicType, Expr};
 
@@ -59,9 +59,37 @@ pub fn validate_args(name: &String, args: &[Expr], memory_manager: &MemoryManage
 
 
 // // // // // // // // // // // // Internal Functions // // // // // // // // // // // // // // //
-pub fn print_fn(_memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
-    Ok(vec![
-        IR::MOVE_TO_STACK_LAST,
-        IR::OUTPUT_ALL
-    ])
+pub fn print_fn(memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
+    // FIXME: STILL FIX MEMORY MANAGEMENT SYNC BC I HATE MY LIFE
+    fn output_char(s: char, memory_manager: &MemoryManager) -> Vec<IR> {
+        vec![
+            IR::SET_POINTER { index: get_stack_free_index(&memory_manager) },
+            IR::LOAD_IMMEDIATE_STRING { value: s.to_string() },
+            IR::SET_POINTER { index: get_stack_last_index(&memory_manager) },
+            IR::OUTPUT,
+        ]
+    }
+
+    if memory_manager.get_len_stack() == 0 {
+        return Ok(
+            output_char('\n', memory_manager)
+        )
+    }
+
+    let mut output: Vec<IR> = Vec::new();
+
+    while memory_manager.get_len_stack() > 0 {
+        output.extend([
+            IR::SET_POINTER {index: get_stack_last_index(memory_manager)},
+            IR::OUTPUT,
+        ]);
+        if memory_manager.get_len_stack() != 1 {
+            output.extend(output_char(' ', memory_manager));
+        }
+        memory_manager.pop();
+    }
+
+    output.extend(output_char('\n', memory_manager));
+
+    Ok(output)
 }
