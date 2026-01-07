@@ -35,7 +35,7 @@ LOAD_IMMIDIATE "d"
 PRINT
 ```
 
-Which is... far from perfect. So I decided to change it around a bit (It reversed because it pops it from the top of the stack):
+Which is... far from perfect. So I decided to change it around a bit (It's reversed because it pops it from the top of the stack):
 ```
 LOAD_IMMIDIATE "\n"
 LOAD_IMMIDIATE "d"
