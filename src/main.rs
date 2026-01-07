@@ -22,7 +22,7 @@ fn main() {
         .iter()
         .map(|x| x.strip_prefix('\n').unwrap_or(x.as_str()).to_string())
         .filter(|x| !x.is_empty())
-        .map(|x| tokenize(x.clone()))
+        .map(|x| tokenize(&x))
         .map(
             |x| match x {
                 Ok(expr) => expr,

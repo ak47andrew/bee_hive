@@ -17,7 +17,7 @@ fn translate_ir(instruction: IR) -> String {
             format!("{}<]", "+".repeat(value as usize))
         }
         IR::OUTPUT => {
-            "[-+!]>!>#![+-!].[-]".to_string()
+            "[-+!#]>!>#![+-!].[-]".to_string()
         }
         IR::STORE_VARIABLE { .. } => {todo!()}
         IR::LOAD_VARIABLE => {todo!()}

@@ -1,8 +1,10 @@
 use std::collections::HashMap;
+use crate::translator::intermediate_language::{get_heap_free_index, get_stack_free_index, get_stack_last_index, heap_to_global, IR};
 use crate::translator::tokenizer::BasicType;
 
+#[derive(Eq, PartialEq)]
 pub struct MemoryManagerVariable {
-    pub cell: usize,
+    pub cell: i16,
     pub var_type: BasicType
 }
 
@@ -20,15 +22,18 @@ impl MemoryManager {
         }
     }
 
-    pub fn get_var(&self, name: String) -> Option<&MemoryManagerVariable> {
-        self.variables.get(&name)
+    pub fn get_var(&self, name: &String) -> Option<&MemoryManagerVariable> {
+        self.variables.get(name)
     }
 
-    pub fn set_var(&mut self, name: String, var_type: BasicType) {
+    pub fn set_var(&mut self, name: String, var_type: BasicType) -> i16 {
+        let cell = get_heap_free_index(self);
         self.variables.insert(name, MemoryManagerVariable {
-            cell: self.variables.len(),
+            cell,
             var_type
         });
+
+        cell
     }
 
     pub fn push(&mut self, var_type: BasicType) {
@@ -53,5 +58,62 @@ impl MemoryManager {
     
     pub fn get_len_heap(&self) -> usize {
         self.variables.len()
+    }
+
+    // === IR gen functions ===
+    pub fn load_immediate_string(&mut self, value: &String) -> Vec<IR> {
+        assert!(value.is_ascii(), "Non-ASCII string passed to memory manager");
+
+        let output = vec![
+            IR::SET_POINTER {index: get_stack_free_index(&self)},
+            IR::LOAD_IMMEDIATE_STRING {value: value.chars().rev().collect()} // reversing bc it's going on the stack
+        ];
+
+        self.push_chars(value.len());
+
+        output
+    }
+
+    pub fn load_immediate_integer(&mut self, value: u8) -> Vec<IR> {
+        assert!(true, "No check needed here - u8 is our safeguard");
+
+        let output = vec![
+            IR::SET_POINTER {index: get_stack_free_index(&self)},
+            IR::LOAD_IMMEDIATE_INTEGER {value}
+        ];
+        self.push_int();
+
+        output
+    }
+
+    pub fn output(&mut self) -> Vec<IR> {
+        let o = vec![
+            IR::SET_POINTER {index: get_stack_last_index(&self)},
+            IR::OUTPUT,
+        ];
+        self.pop();
+
+        o
+    }
+
+    pub fn load_variable(&mut self, cell: i16, var_type: BasicType) -> Vec<IR> {
+        assert!(self.variables.values().any(|v| v.cell == cell && v.var_type == var_type),
+                "No variable found");
+
+        let output = vec![
+            IR::SET_POINTER {index: heap_to_global(cell)},
+            IR::LOAD_VARIABLE
+        ];
+        self.push(var_type);
+
+        output
+    }
+
+    pub fn store_variable(&mut self, name: &String, var_type: BasicType) -> Vec<IR> {
+        let cell = self.set_var(name.clone(), var_type);
+        vec![
+            IR::SET_POINTER {index: get_stack_last_index(&self)},
+            IR::STORE_VARIABLE { cell }
+        ]
     }
 }

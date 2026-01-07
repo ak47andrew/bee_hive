@@ -8,7 +8,7 @@
 (x6 or something like that)
 
 Okay... I have 5 days left, and my current concern is about stack and heap manipulations really. It's actually super
-hard to think about and create a cohesive algorythm for. So just to make things a bit easier, I'll customize brainfuck
+hard to think about and create a cohesive algorithm for. So just to make things a bit easier, I'll customize brainfuck
 interpreter/runner a bit further than I previously thought. Here's what I've got:
 1) Stripe is infinite in both directions. I'm not yet sure how to implement this properly, especially if porting to C 
 for microcontrollers, but I'll figure this one out
