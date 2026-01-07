@@ -8,14 +8,14 @@
 
 Yahoo! I just got 3 weeks off the initial deadline xD
 
-Well, I guess shit happens. Yet by that time I created, fixed and refixed automatically generated animations of translation process and nj execution. Also I feel kinda burned out of this project tbh. This just doesn't turn the same fire that was there in the first two devlogs. Probably because I was working on animations and it's not as intresting as writing the translator's code itself, but who knows. For today I'll just write this devlog, commit & push and tomorrow... I don't even know. I probably will program some features, yet I'm not sure if I'll have enough willpower and other things like that. If I will - great! If not - probably not a big deal anyway
+Well, I guess shit happens. Yet by that time I created, fixed and refixed automatically generated animations of translation process and nj execution. Also, I feel kinda burned out of this project tbh. This just doesn't turn the same fire that was there in the first two devlogs. Probably because I was working on animations, and it's not as interesting as writing the translator's code itself, but who knows. For today, I'll just write this devlog, commit & push and tomorrow... I don't even know. I probably will program some features, yet I'm not sure if I'll have enough willpower and other things like that. If I will - great! If not - probably not a big deal anyway
 
 About further development I have a few thoughts: optimization, strings or input
 
 1. Strings
-   That's the easiest one: add full support for strins and numbers higher then 255 aka do some encoding stuff. I already have this in past commits! I just need to pull it up and correctly setup to work with this "variable size" style. And that means writing a lot of brainfuck by hand... That quite a pain in the ass tbh.
+   That's the easiest one: add full support for strings and numbers higher than 255 aka do some encoding stuff. I already have this in past commits! I just need to pull it up and correctly setup to work with this "variable size" style. And that means writing a lot of brainfuck by hand... That quite a pain in the ass tbh.
 2. Input
-   Add `input_char` function to create blocking char input from a user. Because it's a single char and cause we can't do much about it in the moment other then output - I can do it without much trouble or extra work. This feels like low hanging fruit 
+   Add `input_char` function to create blocking char input from a user. Because it's a single char and cause we can't do much about it at the moment other than output - I can do it without much trouble or extra work. This feels like low-hanging fruit 
 3. Optimization
 
    I have a few ideas of how to split the opcodes a bit further and make them indeed undivisable. Let me demonstrate what I have in mind
@@ -29,7 +29,7 @@ About further development I have a few thoughts: optimization, strings or input
    LOAD_IMMEDIATE "2"
    PRINT
    ```
-   At first we can split it into something like this:
+   At first, we can split it into something like this:
    ```
    MOVE_TO_EMPTY_STACK
    LOAD_IMMEDIATE_RELATIVE "1"
@@ -60,4 +60,4 @@ About further development I have a few thoughts: optimization, strings or input
 
 Well, I'm thinking about any of this three directions with each having different level of impact on the project and my own enjoyment. And until that - see you later ^^
 
-P.S. Don't forget to drop animation examples to Kseniya tomorrow morning, she's waiting for the for the three weeks now xD
+P.S. Don't forget to drop animation examples to Kseniya tomorrow morning, she's waiting for the three weeks now xD

@@ -4,7 +4,7 @@ use once_cell::sync::Lazy;
 use crate::translator::func_call::get_function_symbol;
 use crate::translator::memory_manager::MemoryManager;
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum BasicType {
     Integer,
     Char,
@@ -27,7 +27,7 @@ impl Expr {
             Expr::Integer { .. } => { Ok(BasicType::Integer) }
             Expr::String { .. } => { Ok(BasicType::Char) }
             Expr::VariableName { name } => {
-                match memory_manager.get_var(name.clone()) {
+                match memory_manager.get_var(name) {
                     None => { Err(format!("Variable '{}' not found", name)) }
                     Some(value) => { Ok(value.var_type) }
                 }
@@ -116,7 +116,7 @@ pub fn is_valid_identifier(s: &str) -> bool {
 }
 
 
-pub fn tokenize(statement: String) -> Result<Expr, String> {
+pub fn tokenize(statement: &String) -> Result<Expr, String> {
     if let Ok(Some(captures)) = INTEGER_REGEX.captures(&statement) {
         return match captures.get(1).unwrap().as_str().parse::<u8>()
         {
@@ -133,7 +133,7 @@ pub fn tokenize(statement: String) -> Result<Expr, String> {
             return Err(format!("variable name {} should be a valid identifier", name));
         }
 
-        let var_value = tokenize(captures.get(2).unwrap().as_str().to_string())?;
+        let var_value = tokenize(&captures.get(2).unwrap().as_str().to_string())?;
         return match var_value {
             Expr::Integer { .. } => Ok(Expr::VariableAssignment {
                 name: name.to_string(),
@@ -151,7 +151,7 @@ pub fn tokenize(statement: String) -> Result<Expr, String> {
         let parsed_args = split_args(captures.get(2).unwrap().as_str().to_string());
         let mut args = vec![];
         for arg in parsed_args {
-            match tokenize(arg) {
+            match tokenize(&arg) {
                 Ok(value) => args.push(value),
                 Err(err) => return Err(err),
             }
@@ -163,6 +163,6 @@ pub fn tokenize(statement: String) -> Result<Expr, String> {
     if !is_valid_identifier(&statement) {
         Err(format!("Can't parse statement: {}", statement))
     } else {
-        Ok(Expr::VariableName {name: statement})
+        Ok(Expr::VariableName {name: statement.clone() })
     }
 }

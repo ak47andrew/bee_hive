@@ -10,9 +10,9 @@ Okay, okay, before we start let me do a bit of an offtop
 ```
 OH MY FUCKING GOD THIS SUMMARY IS SO DAMN GOOOOODDDD!
 ```
-I just got year's summary from Yandex music and I just hype every fucking time, sorry. Also my total listening time this year is 2 months... Yeah, I feel like I'm addicted to music xD
+I just got year's summary from Yandex music and I just hype every fucking time, sorry. Also, my total listening time this year is 2 months... Yeah, I feel like I'm addicted to music xD
 
-Oh and I also completed Dispatch this weekend and it's also fucking amazing, the best 9 hours of my life.
+Oh, and I also completed Dispatch this weekend, and it's also fucking amazing, the best 9 hours of my life.
 
 Anyway let's come back to the code because this is also pretty fucking good.
 
@@ -35,7 +35,7 @@ LOAD_IMMIDIATE "d"
 PRINT
 ```
 
-Which is... far from perfect. So I decided to change it around a bit (It revesed because it pops it from the top of the stack):
+Which is... far from perfect. So I decided to change it around a bit (It reversed because it pops it from the top of the stack):
 ```
 LOAD_IMMIDIATE "\n"
 LOAD_IMMIDIATE "d"
