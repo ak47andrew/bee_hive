@@ -39,5 +39,5 @@ pub fn codegen(irs: Vec<IR>) -> String {
         out.push('\n');
     }
 
-    out.strip_suffix("\n\n").unwrap_or(out.as_str()).to_string()
+    out.trim().to_string()
 }

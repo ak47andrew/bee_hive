@@ -74,7 +74,7 @@ fn split_args(s: String) -> Vec<String> {
             escaped = false;
         } else if c == '\\' {
             escaped = true;
-        } else if c == '\'' {
+        } else if c == '"' {
             is_string = !is_string;
             current.push(c.to_string());
         } else if c == ',' && !is_string {
@@ -117,6 +117,8 @@ pub fn is_valid_identifier(s: &str) -> bool {
 
 
 pub fn tokenize(statement: &String) -> Result<Expr, String> {
+    let statement = statement.trim().to_string();
+
     if let Ok(Some(captures)) = INTEGER_REGEX.captures(&statement) {
         return match captures.get(1).unwrap().as_str().parse::<u8>()
         {
@@ -128,7 +130,7 @@ pub fn tokenize(statement: &String) -> Result<Expr, String> {
         return Ok(Expr::String {value: captures.get(1).unwrap().as_str().to_string().replace("\\n", "\n")});
     }
     if let Ok(Some(captures)) = VARIABLE_REGEX.captures(&statement) {
-        let name = captures.get(1).unwrap().as_str().strip_suffix(' ').unwrap();
+        let name = captures.get(1).unwrap().as_str().trim();
         if !is_valid_identifier(name) {
             return Err(format!("variable name {} should be a valid identifier", name));
         }
