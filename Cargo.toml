@@ -1,7 +1,14 @@
 [package]
-name = "bee"
-version = "0.1.0"
+name = "bee_hive"
+version = "0.10.0"
 edition = "2024"
+
+description = "An experimental compiler for the bee language targeting Brainfuck"
+license = "MIT"
+repository = "https://github.com/ak47andrew/hive"
+readme = "README.md"
+keywords = ["compiler", "esolang", "brainfuck", "cli"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 clap = { version = "4.0", features = ["derive"] }

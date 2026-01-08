@@ -62,8 +62,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "bee"
-version = "0.1.0"
+name = "bee_hive"
+version = "0.10.0"
 dependencies = [
  "clap",
  "fancy-regex",
