@@ -10,19 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.10.0] - 2026-01-08
 **This is a whole rewrite of a project in rust because last codebase was a huge mess. Mostly because `python` and my crooked arms**
 
-With it codebase quality will (hopefully) rise dramatically, as well as 
+With it codebase quality will (hopefully) rise dramatically, as well as some performance improvements. 
+Also see the [devlog](docs/devlog/DEVLOG-0005-about-rewrite-in-rust.md) for more "unofficial" explanation
 
 ### Changed
 - Comments changed from C-style: `//` to Python-style: `#`
 
 ### Removed
-- Preprocessor isn't present and won't be present any soon. So now `#loop i 0 5` and simmilar will be treated as comments
+- Preprocessor isn't present and won't be present any soon. So now `#loop i 0 5` and similar will be treated as comments
 
 ### Known issues
-- Passing integer to a `print` function will output corresponding char. This is not inteded behaviour and will be fixed in the update
-- You can't use even escaped double quotes in string literals. Not sure if it's a top priority for the next update (because it requires partial rewrite of the parsing system), but it will be fixed eventially
+- Passing integer to a `print` function will output corresponding char. This is not intended behavior and will be fixed in the update
+- You can't use even escaped double quotes in string literals. Not sure if it's a top priority for the next update (because it requires partial rewrite of the parsing system), but it will be fixed eventually
 - `print` temporarily function now only takes a single argument
-- `put` function was teperarily removed. It will be back soon in one way or another
+- `put` function was temporarily removed. It will be back soon in one way or another
 
 ## [0.4.1] - 2025-12-06
 
@@ -44,7 +45,7 @@ With it codebase quality will (hopefully) rise dramatically, as well as
 
 ### Fixed
 - Now `\n` in strings works properly
-- Fixed an issue when `PRINT_ALL` didn't correctly handled multiple values on the stack
+- Fixed an issue when `PRINT_ALL` didn't correctly handle multiple values on the stack
 
 ### Deprecated
 - Visualizations are no longer supported and updated due the lack of quality
@@ -52,7 +53,7 @@ With it codebase quality will (hopefully) rise dramatically, as well as
 ## [0.3.0] - 2025-10-15
 
 ### Added
-- Added two python scripts for visualazing translation process and NJ's execution (second one is still quite buggy tho)
+- Added two python scripts for visualizing translation process and NJ's execution (second one is still quite buggy tho)
 
 ### Changed
 - Put all the code into `src` function and made it possible to work as with python's modules
@@ -63,7 +64,7 @@ With it codebase quality will (hopefully) rise dramatically, as well as
 - Made Token model more stable code-wise by removing nested lists and using args
 
 ### Fixed
-- Now `print` and `put` functions properly hadle several arguments
+- Now `print` and `put` functions properly handle several arguments
 
 ## [0.2.0] - 2025-09-30
 

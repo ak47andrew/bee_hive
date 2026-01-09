@@ -1,5 +1,6 @@
 # DEVLOG 0001: Global rewrite or "Why first idea you have is probably the worst"
 
+**Developer:** ak47andrew
 **Date:** 20.09.2025 (Sat)<br>
 **Mood:** Calm, obsessed with organizing everything xD<br>
 **Writing start time:** 0:21<br>

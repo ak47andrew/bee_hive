@@ -1,5 +1,6 @@
 # DEVLOG 0003: Idk, I just wanna yap about some things :P
 
+**Developer:** ak47andrew
 **Date:** 18.10.2025 (Saturday night)<br>
 **Mood:** Quite playfull, yet I bit sleepy<br>
 **Writing start time:** 02:18<br>

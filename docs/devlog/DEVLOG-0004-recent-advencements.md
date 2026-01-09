@@ -1,10 +1,11 @@
 # DEVLOG 0004: Whatever tf happened
 
-- **Date:** 01.12.2025 (Monday, in the middle of the 5th class)
-- **Mood:** Super hyped
-- **Writing start time:** 13:35
-- **Writing end time:** *TODO: DON'T FORGET TO ADD*
-- **Current song playing:** My Year in Review playlist
+**Developer:** ak47andrew
+**Date:** 01.12.2025 (Monday, in the middle of the 5th class)
+**Mood:** Super hyped
+**Writing start time:** 13:35
+**Writing end time:** *Yeah, I forgot once again*
+**Current song playing:** My Year in Review playlist
 
 Okay, okay, before we start let me do a bit of an offtop
 ```

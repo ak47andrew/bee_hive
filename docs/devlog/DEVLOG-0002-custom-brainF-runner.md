@@ -1,5 +1,6 @@
 # DEVLOG 0002: Using custom brainF runner bc it's easier
 
+**Developer:** ak47andrew
 **Date:** 25.09.2025 (Thu)<br>
 **Mood:** Calm and focused, yet a bit tired<br>
 **Writing start time:** 21:30<br>
