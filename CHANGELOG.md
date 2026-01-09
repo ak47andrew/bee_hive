@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.10.0] - 2026-01-08
+## [0.10.1] - 2026-01-09
+
+### Changed
+- Updated version and README for `cargo`
+- Fixed build action (hopefully)
+
+## [0.10.0] - 2026-01-09
 **This is a whole rewrite of a project in rust because last codebase was a huge mess. Mostly because `python` and my crooked arms**
 
 With it codebase quality will (hopefully) rise dramatically, as well as some performance improvements. 
