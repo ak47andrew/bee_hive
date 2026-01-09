@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - 'v*' # Trigger a release on any tag starting with 'v'
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -18,11 +16,11 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact_name: bee-linux
-            binary_name: bee
+            binary_name: bee_hive
             target: x86_64-unknown-linux-gnu
           - os: windows-latest
             artifact_name: bee-windows.exe
-            binary_name: bee.exe
+            binary_name: bee_hive.exe
             target: x86_64-pc-windows-msvc
 
     steps:
@@ -33,17 +31,6 @@ jobs:
       with:
         toolchain: stable
         targets: ${{ matrix.target }}
-
-    - name: Cache Cargo dependencies
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-cargo-
 
     - name: Build release binary
       run: |

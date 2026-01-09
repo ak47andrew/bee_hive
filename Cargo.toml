@@ -1,6 +1,6 @@
 [package]
 name = "bee_hive"
-version = "0.10.0"
+version = "0.10.1"
 edition = "2024"
 
 description = "An experimental compiler for the bee language targeting Brainfuck"
