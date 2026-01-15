@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use crate::translator::intermediate_language::{get_heap_free_index, get_stack_free_index, get_stack_last_index, heap_to_global, IR};
+use crate::translator::intermediate_language::{get_heap_free_index, get_stack_free_index, get_stack_last_index, IR};
 use crate::translator::tokenizer::BasicType;
 
 #[derive(Eq, PartialEq)]
@@ -105,7 +105,7 @@ impl MemoryManager {
                 "No variable found");
 
         let output = vec![
-            IR::SET_POINTER {index: heap_to_global(cell)},
+            IR::SET_POINTER {index: cell},
             IR::LOAD_VARIABLE {cell: get_stack_free_index(self)}
         ];
         self.push(var_type);
@@ -115,9 +115,12 @@ impl MemoryManager {
 
     pub fn store_variable(&mut self, name: &String, var_type: BasicType) -> Vec<IR> {
         let cell = self.set_var(name.clone(), var_type);
-        vec![
+        let output = vec![
             IR::SET_POINTER {index: get_stack_last_index(&self)},
             IR::STORE_VARIABLE { cell }
-        ]
+        ];
+        self.pop();
+
+        output
     }
 }

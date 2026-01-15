@@ -4,6 +4,7 @@ mod cli;
 use std::process;
 use clap::Parser;
 use crate::cli::Cli;
+use crate::translator::cleanup::split_statements;
 use crate::translator::compiler::codegen;
 use crate::translator::intermediate_language::{evaluate, IR};
 use crate::translator::memory_manager::MemoryManager;
@@ -13,19 +14,18 @@ fn main() {
     let args = Cli::parse();
     let content = std::fs::read_to_string(args.path).unwrap();
 
-    // cleanup.rs
-    let lines = translator::cleanup::split_statements(&content);
+    let lines = split_statements(&content)
+        .iter()
+        .map(|x| x.trim().to_string())
+        .filter(|x| !x.is_empty())
+        .collect::<Vec<String>>();
 
     if args.debug {
         println!("Statements:\n{:#?}\n", lines);
     }
 
-    // tokenizer.rs
-
     let asts: Vec<Expr> = lines
         .iter()
-        .map(|x| x.trim().to_string())
-        .filter(|x| !x.is_empty())
         .map(|x| tokenize(&x))
         .map(
             |x| match x {
@@ -41,9 +41,8 @@ fn main() {
         println!("Tokens:\n{:#?}\n", asts);
     }
 
-
-    // intermediate_language.rs
     let mut memory_manager = MemoryManager::new();
+    #[allow(nonstandard_style)]
     let mut IRs: Vec<IR> = Vec::new();
     for ast in asts {
         match evaluate(&ast, &mut memory_manager) {

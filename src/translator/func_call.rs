@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use once_cell::sync::Lazy;
-use crate::translator::intermediate_language::{get_stack_free_index, get_stack_last_index, IR};
+use crate::translator::intermediate_language::IR;
 use crate::translator::memory_manager::MemoryManager;
 use crate::translator::tokenizer::{BasicType, Expr};
 
@@ -15,7 +15,8 @@ pub struct FunctionSymbol {
 
 static FUNCTION_SYMBOL_TABLE: Lazy<HashMap<&str, FunctionSymbol>> = Lazy::new(||
     HashMap::from([
-        ("print", FunctionSymbol {args: vec![BasicType::Any], return_type: None, func: print_fn})
+        ("print", FunctionSymbol {args: vec![BasicType::Any], return_type: None, func: print_fn}),
+        ("put", FunctionSymbol {args: vec![BasicType::Any], return_type: None, func: put_fn})
     ])
 );
 
@@ -60,21 +61,17 @@ pub fn validate_args(name: &String, args: &[Expr], memory_manager: &MemoryManage
 
 // // // // // // // // // // // // Internal Functions // // // // // // // // // // // // // // //
 pub fn print_fn(memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
-    // FIXME: STILL FIX MEMORY MANAGEMENT SYNC BC I HATE MY LIFE
-    fn output_char(s: char, memory_manager: &mut MemoryManager) -> Vec<IR> {
-        vec![
-            memory_manager.load_immediate_string(&s.to_string()),
-            memory_manager.output()
-        ]
-            .iter()
-            .flatten()
-            .map(|x| x.clone())
-            .collect::<Vec<IR>>()
-    }
+    let mut output = put_fn(memory_manager)?;
 
+    output.extend(_output_char('\n', memory_manager));
+
+    Ok(output)
+}
+
+pub fn put_fn(memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
     if memory_manager.get_len_stack() == 0 {
         return Ok(
-            output_char('\n', memory_manager)
+            _output_char('\n', memory_manager)
         )
     }
 
@@ -88,7 +85,16 @@ pub fn print_fn(memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
         // ! Maybe readd it later with proper args? IDK
     }
 
-    output.extend(output_char('\n', memory_manager));
-
     Ok(output)
+}
+
+fn _output_char(s: char, memory_manager: &mut MemoryManager) -> Vec<IR> {
+    vec![
+        memory_manager.load_immediate_string(&s.to_string()),
+        memory_manager.output()
+    ]
+        .iter()
+        .flatten()
+        .map(|x| x.clone())
+        .collect::<Vec<IR>>()
 }

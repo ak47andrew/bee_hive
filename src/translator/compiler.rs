@@ -1,5 +1,4 @@
 use crate::translator::intermediate_language::IR;
-use crate::translator::memory_manager::MemoryManager;
 use crate::translator::tokenizer::BasicType;
 
 fn translate_ir(instruction: IR) -> String {
@@ -19,7 +18,7 @@ fn translate_ir(instruction: IR) -> String {
         }
         IR::OUTPUT {value_type} => {
             if value_type == BasicType::Void {
-                println!("Something might've gone wrong. Compiler's trying to output a `Void` type. This can lead to UB");
+                println!("Something might've gone wrong. Compiler's trying to output a `Void` type. This can lead to UB, be aware!");
             }
 
             if value_type != BasicType::Char {
@@ -28,8 +27,15 @@ fn translate_ir(instruction: IR) -> String {
                 "[-+!#]>!>#![+-!].[-]".to_string()
             }
         }
-        IR::STORE_VARIABLE { cell } => {todo!()}
-        IR::LOAD_VARIABLE {cell} => {todo!()}
+        // TODO: this is literally the same code! We should absolutely generalise that!
+        // Cell to which one you want to store a variable, pointer at a value
+        IR::STORE_VARIABLE { cell } => {
+            format!("[-+!#]{}#![+-!]", translate_ir(IR::SET_POINTER { index: cell }))
+        }
+        // Cell to which load variable, pointer at a value
+        IR::LOAD_VARIABLE {cell} => {
+            format!("[-+!#]{}#![+-!]", translate_ir(IR::SET_POINTER { index: cell }))
+        }
     }
 }
 
