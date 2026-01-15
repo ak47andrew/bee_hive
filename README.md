@@ -79,31 +79,32 @@ Resulting code is outputted to the stdout, so you might use output redirection t
 
 Example program at BEE language (to output `x = 1`) looks something like this:
 ```
-print("x = 1");
+var x = 10;
+put("x=");
+print(x);
 ```
 
 Resulting code will look like this:
 ```
 >!<  // SET_POINTER { index: 1 }
-+++++++++++++++++++++++++++++++++++++++++++++++++<
-++++++++++++++++++++++++++++++++<
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<
-++++++++++++++++++++++++++++++++<
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<  // LOAD_IMMEDIATE_STRING { value: "1 = x" }
->!<<<<<  // SET_POINTER { index: 5 }
-[-+!#]>!>#![+-!].[-]  // OUTPUT
->!<<<<  // SET_POINTER { index: 4 }
-[-+!#]>!>#![+-!].[-]  // OUTPUT
->!<<<  // SET_POINTER { index: 3 }
-[-+!#]>!>#![+-!].[-]  // OUTPUT
->!<<  // SET_POINTER { index: 2 }
-[-+!#]>!>#![+-!].[-]  // OUTPUT
+++++++++++<  // LOAD_IMMEDIATE_INTEGER { value: 10 }
 >!<  // SET_POINTER { index: 1 }
-[-+!#]>!>#![+-!].[-]  // OUTPUT
+[-+!#]>!>>>>>>#![+-!]  // STORE_VARIABLE { cell: 6 }
+>!<  // SET_POINTER { index: 1 }
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<  // LOAD_IMMEDIATE_STRING { value: "=x" }
+>!<<  // SET_POINTER { index: 2 }
+[-+!#]>!>#![+-!].[-]  // OUTPUT { value_type: Char }
+>!<  // SET_POINTER { index: 1 }
+[-+!#]>!>#![+-!].[-]  // OUTPUT { value_type: Char }
+>!>>>>>>  // SET_POINTER { index: 6 }
+[-+!#]>!<#![+-!]  // LOAD_VARIABLE { cell: 1 }
+>!<  // SET_POINTER { index: 1 }
+[-+!#]>!>#![+-!]>>+<<.[-]>>-  // OUTPUT { value_type: Integer }
 >!<  // SET_POINTER { index: 1 }
 ++++++++++<  // LOAD_IMMEDIATE_STRING { value: "\n" }
 >!<  // SET_POINTER { index: 1 }
-[-+!#]>!>#![+-!].[-]  // OUTPUT
+[-+!#]>!>#![+-!].[-]  // OUTPUT { value_type: Char }
 ```
 
 Info about BEE programming language and NJ target can be found in [GitHub wiki](https://github.com/ak47andrew/bee_hive/wiki)
@@ -114,7 +115,6 @@ Check [Changelog](CHANGELOG.md) and [GitHub issues](https://github.com/ak47andre
 
 ## Roadmap
 
-- Variable support (Already around the corner!)
 - IR optimization
 - Some math
 - Ability to write and run code at Arduino and push code directly from this CLI

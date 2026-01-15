@@ -62,11 +62,18 @@ jobs:
     - name: List downloaded artifacts
       run: ls -la dist/
 
+    - name: Read changelog
+      id: changelog
+      uses: mindsers/changelog-reader-action@v2
+      with:
+        path: CHANGELOG.md
+        version: ${{ github.ref_name }}
+
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
-        generate_release_notes: true
+        body: ${{ steps.changelog.outputs.changes }}
         files: |
           dist/**/*

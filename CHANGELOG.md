@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-01-15
+
+### Added
+- `put` function was temporarily added and then will be changed as an argument for `print` function
+- Variables added
+
+### Fixed
+- Using integers
+- Printing non-strings
+
 ## [0.10.1] - 2026-01-09
 
 ### Changed
