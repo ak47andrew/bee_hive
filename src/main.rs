@@ -16,6 +16,10 @@ fn main() {
     // cleanup.rs
     let lines = translator::cleanup::split_statements(&content);
 
+    if args.debug {
+        println!("Statements:\n{:#?}\n", lines);
+    }
+
     // tokenizer.rs
 
     let asts: Vec<Expr> = lines
@@ -33,6 +37,11 @@ fn main() {
             }
     ).collect();
 
+    if args.debug {
+        println!("Tokens:\n{:#?}\n", asts);
+    }
+
+
     // intermediate_language.rs
     let mut memory_manager = MemoryManager::new();
     let mut IRs: Vec<IR> = Vec::new();
@@ -47,6 +56,10 @@ fn main() {
             }
         }
 
+    }
+
+    if args.debug {
+        println!("IRs:\n{:#?}\n", IRs);
     }
 
     let code = codegen(IRs);

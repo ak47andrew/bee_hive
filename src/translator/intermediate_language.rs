@@ -1,5 +1,5 @@
 use crate::translator::memory_manager::MemoryManager;
-use crate::translator::tokenizer::Expr;
+use crate::translator::tokenizer::{BasicType, Expr};
 use crate::translator::func_call;
 
 #[allow(non_camel_case_types)]
@@ -8,9 +8,9 @@ pub enum IR {
     SET_POINTER {index: i16},
     LOAD_IMMEDIATE_STRING {value: String},
     LOAD_IMMEDIATE_INTEGER {value: u8},
-    OUTPUT,
-    STORE_VARIABLE {cell: i16},
-    LOAD_VARIABLE,
+    OUTPUT {value_type: BasicType},
+    STORE_VARIABLE {cell: i16},  // Cell to which one you want to store a variable, pointer at a value
+    LOAD_VARIABLE {cell: i16},  // Cell to which load variable, pointer at a value
 }
 
 pub fn evaluate(statement: &Expr, memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {

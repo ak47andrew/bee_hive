@@ -1,5 +1,6 @@
 use crate::translator::intermediate_language::IR;
 use crate::translator::memory_manager::MemoryManager;
+use crate::translator::tokenizer::BasicType;
 
 fn translate_ir(instruction: IR) -> String {
     match instruction {
@@ -14,13 +15,21 @@ fn translate_ir(instruction: IR) -> String {
                 .join("\n")
         }
         IR::LOAD_IMMEDIATE_INTEGER { value } => {
-            format!("{}<]", "+".repeat(value as usize))
+            format!("{}<", "+".repeat(value as usize))
         }
-        IR::OUTPUT => {
-            "[-+!#]>!>#![+-!].[-]".to_string()
+        IR::OUTPUT {value_type} => {
+            if value_type == BasicType::Void {
+                println!("Something might've gone wrong. Compiler's trying to output a `Void` type. This can lead to UB");
+            }
+
+            if value_type != BasicType::Char {
+                "[-+!#]>!>#![+-!]>>+<<.[-]>>-".to_string()
+            } else {
+                "[-+!#]>!>#![+-!].[-]".to_string()
+            }
         }
-        IR::STORE_VARIABLE { .. } => {todo!()}
-        IR::LOAD_VARIABLE => {todo!()}
+        IR::STORE_VARIABLE { cell } => {todo!()}
+        IR::LOAD_VARIABLE {cell} => {todo!()}
     }
 }
 

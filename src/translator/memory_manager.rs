@@ -51,6 +51,10 @@ impl MemoryManager {
     pub fn pop(&mut self) -> Option<BasicType> {
         self.stack.pop()
     }
+
+    pub fn peek(&self) -> Option<&BasicType> {
+        self.stack.last()
+    }
     
     pub fn get_len_stack(&self) -> usize {
         self.stack.len()
@@ -89,7 +93,7 @@ impl MemoryManager {
     pub fn output(&mut self) -> Vec<IR> {
         let o = vec![
             IR::SET_POINTER {index: get_stack_last_index(&self)},
-            IR::OUTPUT,
+            IR::OUTPUT {value_type: *self.peek().unwrap_or(&BasicType::Void)},
         ];
         self.pop();
 
@@ -102,7 +106,7 @@ impl MemoryManager {
 
         let output = vec![
             IR::SET_POINTER {index: heap_to_global(cell)},
-            IR::LOAD_VARIABLE
+            IR::LOAD_VARIABLE {cell: get_stack_free_index(self)}
         ];
         self.push(var_type);
 
