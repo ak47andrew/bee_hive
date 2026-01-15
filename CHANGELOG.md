@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.11.0] - 2026-01-15
+## [v0.11.0] - 2026-01-15
 
 ### Added
 - `put` function was temporarily added and then will be changed as an argument for `print` function
@@ -17,13 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Using integers
 - Printing non-strings
 
-## [0.10.1] - 2026-01-09
+## [v0.10.1] - 2026-01-09
 
 ### Changed
 - Updated version and README for `cargo`
 - Fixed build action (hopefully)
 
-## [0.10.0] - 2026-01-09
+## [v0.10.0] - 2026-01-09
 **This is a whole rewrite of a project in rust because last codebase was a huge mess. Mostly because `python` and my crooked arms**
 
 With it codebase quality will (hopefully) rise dramatically, as well as some performance improvements. 
@@ -41,12 +41,12 @@ Also see the [devlog](docs/devlog/DEVLOG-0005-about-rewrite-in-rust.md) for more
 - `print` temporarily function now only takes a single argument
 - `put` function was temporarily removed. It will be back soon in one way or another
 
-## [0.4.1] - 2025-12-06
+## [v0.4.1] - 2025-12-06
 
 ### Change
 - Fixed the GitHub workflow
 
-## [0.4.0] - 2025-12-06
+## [v0.4.0] - 2025-12-06
 
 ### Added
 - Added debug mode into NJ interpreter now triggered with `--debug` argument
@@ -66,7 +66,7 @@ Also see the [devlog](docs/devlog/DEVLOG-0005-about-rewrite-in-rust.md) for more
 ### Deprecated
 - Visualizations are no longer supported and updated due the lack of quality
 
-## [0.3.0] - 2025-10-15
+## [v0.3.0] - 2025-10-15
 
 ### Added
 - Added two python scripts for visualizing translation process and NJ's execution (second one is still quite buggy tho)
@@ -74,7 +74,7 @@ Also see the [devlog](docs/devlog/DEVLOG-0005-about-rewrite-in-rust.md) for more
 ### Changed
 - Put all the code into `src` function and made it possible to work as with python's modules
 
-## [0.2.1] - 2025-10-05
+## [v0.2.1] - 2025-10-05
 
 ### Changed
 - Made Token model more stable code-wise by removing nested lists and using args
@@ -82,7 +82,7 @@ Also see the [devlog](docs/devlog/DEVLOG-0005-about-rewrite-in-rust.md) for more
 ### Fixed
 - Now `print` and `put` functions properly handle several arguments
 
-## [0.2.0] - 2025-09-30
+## [v0.2.0] - 2025-09-30
 
 ### Added
 - `put` function that works just like `print`, but without newline
@@ -92,12 +92,12 @@ Also see the [devlog](docs/devlog/DEVLOG-0005-about-rewrite-in-rust.md) for more
 - Fixed incorrect tokenizing when using commas in strings
 - Fixed incorrect interpreting when having space as a value in LOAD_IMMEDIATE (when you had strings with spaces in it)
 
-## [0.1.1] - 2025-09-30
+## [v0.1.1] - 2025-09-30
 
 ### Fixed
 - Fixed an issue where you could set value out of 0-255 range and loaded value would overflow
 
-## [0.1.0] - 2025-09-30
+## [v0.1.0] - 2025-09-30
 
 ### Added
 - **First Alpha Release**: Basic compiler pipeline is now functional!
@@ -111,7 +111,7 @@ Also see the [devlog](docs/devlog/DEVLOG-0005-about-rewrite-in-rust.md) for more
 - CLI with `--debug` flag for development
 - Initial project structure and documentation
 
-## [0.0.1] - 2025-09-20
+## [v0.0.1] - 2025-09-20
 
 ### Added
 - Initial commit for the new implementation of HIVE compiler. For more info check corresponding 
