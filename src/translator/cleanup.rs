@@ -37,9 +37,9 @@ fn lines(code: String) -> Vec<String> {
         }
     }
 
-    return output.iter().filter(
+    output.iter().filter(
         |x| !x.as_str().trim_start_matches(' ').is_empty()
-    ).map(|x| x.clone()).collect();
+    ).map(|x| x.clone()).collect()
 }
 
 pub fn split_statements(code: &str) -> Vec<String> { lines(cleanup_comments(code)) }

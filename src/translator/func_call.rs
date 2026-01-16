@@ -41,7 +41,7 @@ pub fn compare_types(expected: &Vec<BasicType>, got: &Vec<BasicType>) -> bool {
         if expected[ind] != got[ind] { return false; }
     }
 
-    return true;
+    true
 }
 
 pub fn validate_args(name: &String, args: &[Expr], memory_manager: &MemoryManager) -> Result<(), String> {

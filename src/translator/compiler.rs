@@ -36,6 +36,12 @@ fn translate_ir(instruction: IR) -> String {
         IR::LOAD_VARIABLE {cell} => {
             format!("[-+!#]{}#![+-!]", translate_ir(IR::SET_POINTER { index: cell }))
         }
+        IR::INPUT {cell} => {
+            todo!()
+        }
+        IR::WAIT_FOR_INPUT => {
+            todo!()
+        }
     }
 }
 

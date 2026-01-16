@@ -90,14 +90,24 @@ impl MemoryManager {
         output
     }
 
+    pub fn input(&mut self) -> Vec<IR> {
+        let output = vec![
+            IR::SET_POINTER {index: 0},
+            IR::INPUT { cell: get_stack_free_index(self) }
+        ];
+        // FIXME: finish this feature
+
+        output
+    }
+
     pub fn output(&mut self) -> Vec<IR> {
-        let o = vec![
+        let output = vec![
             IR::SET_POINTER {index: get_stack_last_index(&self)},
             IR::OUTPUT {value_type: *self.peek().unwrap_or(&BasicType::Void)},
         ];
         self.pop();
 
-        o
+        output
     }
 
     pub fn load_variable(&mut self, cell: i16, var_type: BasicType) -> Vec<IR> {

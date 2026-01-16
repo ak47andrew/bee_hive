@@ -11,6 +11,8 @@ pub enum IR {
     OUTPUT {value_type: BasicType},
     STORE_VARIABLE {cell: i16},  // Cell to which one you want to store a variable, pointer at a value
     LOAD_VARIABLE {cell: i16},  // Cell to which load variable, pointer at a value
+    INPUT {cell: i16},
+    WAIT_FOR_INPUT,
 }
 
 pub fn evaluate(statement: &Expr, memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
