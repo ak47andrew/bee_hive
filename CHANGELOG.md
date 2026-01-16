@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.12.0] - 2026-01-16
+
+### Added
+- Four new functions for handling input
+- - `input_int` for getting integer corresponding to the pressed key on a keyboard according to the ASCII table
+- - `intput_char` - for getting a single character
+- - `poll_int` - same as `input_int`, but without waiting for input and getting `0` if no value is available in the moment
+- - `poll_char` - same as `poll_char`, but for a char and getting `\0` as default
+
+### Fixed
+- Fixed an issue where variable didn't change after assigning a value to an already defined variable
+
+### Known issues
+- For now to variables can only be assigned integer literals: not functions that return integer, not other variables 
+holding integers - nothing. This will be fixed in `v0.12.1`
+
 ## [v0.11.0] - 2026-01-15
 
 ### Added
