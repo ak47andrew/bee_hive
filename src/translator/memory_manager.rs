@@ -90,12 +90,15 @@ impl MemoryManager {
         output
     }
 
-    pub fn input(&mut self) -> Vec<IR> {
-        let output = vec![
+    pub fn input(&mut self, var_type: BasicType, is_blocking: bool) -> Vec<IR> {
+        let mut output = vec![
             IR::SET_POINTER {index: 0},
             IR::INPUT { cell: get_stack_free_index(self) }
         ];
-        // FIXME: finish this feature
+        if is_blocking {
+            output.insert(0, IR::WAIT_FOR_INPUT);
+        }
+        self.push(var_type);
 
         output
     }
@@ -124,7 +127,14 @@ impl MemoryManager {
     }
 
     pub fn store_variable(&mut self, name: &String, var_type: BasicType) -> Vec<IR> {
-        let cell = self.set_var(name.clone(), var_type);
+        let cell: i16 = match self.get_var(name) {
+            Some(var) => {
+                var.cell
+            }
+            None => {
+                self.set_var(name.clone(), var_type)
+            }
+        };
         let output = vec![
             IR::SET_POINTER {index: get_stack_last_index(&self)},
             IR::STORE_VARIABLE { cell }

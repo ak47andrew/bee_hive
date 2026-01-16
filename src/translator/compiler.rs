@@ -30,17 +30,17 @@ fn translate_ir(instruction: IR) -> String {
         // TODO: this is literally the same code! We should absolutely generalise that!
         // Cell to which one you want to store a variable, pointer at a value
         IR::STORE_VARIABLE { cell } => {
-            format!("[-+!#]{}#![+-!]", translate_ir(IR::SET_POINTER { index: cell }))
+            format!("[-+!#]{}[-]#![+-!]", translate_ir(IR::SET_POINTER { index: cell }))
         }
         // Cell to which load variable, pointer at a value
         IR::LOAD_VARIABLE {cell} => {
             format!("[-+!#]{}#![+-!]", translate_ir(IR::SET_POINTER { index: cell }))
         }
         IR::INPUT {cell} => {
-            todo!()
+            format!(">![-],[-+!#]{}#![+-!]", translate_ir(IR::SET_POINTER { index: cell }))
         }
         IR::WAIT_FOR_INPUT => {
-            todo!()
+            ">!>>>>[]".to_string()
         }
     }
 }

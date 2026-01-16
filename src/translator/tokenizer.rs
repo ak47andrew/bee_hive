@@ -43,7 +43,7 @@ impl Expr {
                     }
                 }
             }
-                Expr::VariableAssignment { .. } => {
+            Expr::VariableAssignment { .. } => {
                 Err("Are you trying to... assign a variable as an argument? What in hell do you think you're doing???".to_string())
             }
         }

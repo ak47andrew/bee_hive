@@ -16,7 +16,11 @@ pub struct FunctionSymbol {
 static FUNCTION_SYMBOL_TABLE: Lazy<HashMap<&str, FunctionSymbol>> = Lazy::new(||
     HashMap::from([
         ("print", FunctionSymbol {args: vec![BasicType::Any], return_type: None, func: print_fn}),
-        ("put", FunctionSymbol {args: vec![BasicType::Any], return_type: None, func: put_fn})
+        ("put", FunctionSymbol {args: vec![BasicType::Any], return_type: None, func: put_fn}),
+        ("input_char", FunctionSymbol {args: vec![], return_type: Some(BasicType::Char), func: input_char_fn}),
+        ("input_int", FunctionSymbol {args: vec![], return_type: Some(BasicType::Integer), func: input_int_fn}),
+        ("poll_char", FunctionSymbol {args: vec![], return_type: Some(BasicType::Char), func: poll_char_fn}),
+        ("poll_int", FunctionSymbol {args: vec![], return_type: Some(BasicType::Integer), func: poll_int_fn}),
     ])
 );
 
@@ -86,6 +90,22 @@ pub fn put_fn(memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
     }
 
     Ok(output)
+}
+
+pub fn input_char_fn(memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
+    Ok(memory_manager.input(BasicType::Char, true))
+}
+
+pub fn input_int_fn(memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
+    Ok(memory_manager.input(BasicType::Integer, true))
+}
+
+pub fn poll_char_fn(memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
+    Ok(memory_manager.input(BasicType::Char, false))
+}
+
+pub fn poll_int_fn(memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
+    Ok(memory_manager.input(BasicType::Integer, false))
 }
 
 fn _output_char(s: char, memory_manager: &mut MemoryManager) -> Vec<IR> {
