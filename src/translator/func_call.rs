@@ -28,6 +28,10 @@ pub fn get_function_symbol(name: &str) -> Option<FunctionSymbol> {
     FUNCTION_SYMBOL_TABLE.get(name).cloned()
 }
 
+pub fn is_function_exists(name: &str) -> bool {
+    FUNCTION_SYMBOL_TABLE.contains_key(name)
+}
+
 pub fn translate_function_call(name: &String, memory_manager: &mut MemoryManager) -> Result<Vec<IR>, String> {
     let fs;
     match get_function_symbol(name) {

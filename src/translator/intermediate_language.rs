@@ -1,3 +1,4 @@
+use std::io::read_to_string;
 use crate::translator::memory_manager::MemoryManager;
 use crate::translator::tokenizer::{BasicType, Expr};
 use crate::translator::func_call;
@@ -51,6 +52,13 @@ pub fn evaluate(statement: &Expr, memory_manager: &mut MemoryManager) -> Result<
         Expr::VariableAssignment { name, value } => {
             let mut l = evaluate(value, memory_manager)?;
             let var_type = value.get_type(memory_manager)?;
+
+            match var_type {
+                BasicType::Integer => {},
+                _ => {
+                    return Err(format!("Invalid assignment value: {:?}", value.clone()));
+                }
+            }
 
             l.extend(memory_manager.store_variable(name, var_type));
             Ok(l)

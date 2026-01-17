@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use fancy_regex::Regex;
 use once_cell::sync::Lazy;
-use crate::translator::func_call::get_function_symbol;
+use crate::translator::func_call::{get_function_symbol, is_function_exists};
 use crate::translator::memory_manager::MemoryManager;
 
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
@@ -97,7 +97,7 @@ const KEYWORDS: &[&str] = &[
 ];
 
 pub fn is_valid_identifier(s: &str) -> bool {
-    if KEYWORDS.contains(&s) {
+    if KEYWORDS.contains(&s) || is_function_exists(s) {
         return false;
     }
 
@@ -136,18 +136,16 @@ pub fn tokenize(statement: &String) -> Result<Expr, String> {
         }
 
         let var_value = tokenize(&captures.get(2).unwrap().as_str().to_string())?;
-        return match var_value {
-            Expr::Integer { .. } => Ok(Expr::VariableAssignment {
-                name: name.to_string(),
-                value: Box::new(var_value)
-            }),
-            _ => Err("Currently only numbers are supported for storing in variables".to_string()),
-        }
+        return Ok(Expr::VariableAssignment {
+            name: name.to_string(),
+            value: Box::new(var_value)
+        });
     }
     if let Ok(Some(captures)) = FUNC_CALL_REGEX.captures(&statement) {
         let name = captures.get(1).unwrap().as_str().to_string();
-        if !is_valid_identifier(name.as_str()) {
-            return Err(format!("function name {} should be a valid identifier", name));
+        // println!("{}", name);
+        if !is_function_exists(name.as_str()) {
+            return Err(format!("function {} not found", name));
         }
 
         let parsed_args = split_args(captures.get(2).unwrap().as_str().to_string());
