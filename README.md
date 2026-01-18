@@ -20,6 +20,8 @@ You can also check out [this devlog](docs/devlog/DEVLOG-0006-why.md) as well oth
 ## Features
 
 - Ability to write text to the console
+- blocking and non-blocking user input
+- variables for integers
 - *That's it for now... 🥲*
 
 ## Installation
