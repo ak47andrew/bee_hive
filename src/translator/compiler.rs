@@ -45,7 +45,7 @@ fn translate_ir(instruction: IR) -> String {
     }
 }
 
-static CODE_CHARS: &str = ".,[]<>+-!#$";
+pub static CODE_CHARS: &str = ".,[]<>+-!#$";
 
 pub fn codegen(irs: Vec<IR>) -> String {
     let mut out = String::new();

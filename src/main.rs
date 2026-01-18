@@ -4,15 +4,29 @@ mod cli;
 use std::process;
 use clap::Parser;
 use crate::cli::Cli;
-use crate::translator::cleanup::split_statements;
+use crate::translator::cleanup::{post_processing, split_statements};
 use crate::translator::compiler::codegen;
 use crate::translator::intermediate_language::{evaluate, IR};
 use crate::translator::memory_manager::MemoryManager;
 use crate::translator::tokenizer::{Expr, tokenize};
+use std::io::{self, Read, Write};
 
 fn main() {
     let args = Cli::parse();
-    let content = std::fs::read_to_string(args.path).unwrap();
+
+    let mut input: Box<dyn Read> = match args.source {
+        Some(path) => Box::new(std::fs::File::open(path).unwrap()),
+        None => Box::new(io::stdin()),
+    };
+
+    let mut output: Box<dyn Write> = match args.target {
+        Some(path) => Box::new(std::fs::File::create(path).unwrap()),
+        None => Box::new(io::stdout()),
+    };
+
+
+    let mut content = String::new();
+    input.read_to_string(&mut content).unwrap();
 
     let lines = split_statements(&content)
         .iter()
@@ -63,5 +77,7 @@ fn main() {
 
     let code = codegen(IRs);
 
-    println!("{}", code);
+    let post = post_processing(&code, args.mode);
+
+    output.write_all(&*post).unwrap();
 }

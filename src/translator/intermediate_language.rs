@@ -1,4 +1,3 @@
-use std::io::read_to_string;
 use crate::translator::memory_manager::MemoryManager;
 use crate::translator::tokenizer::{BasicType, Expr};
 use crate::translator::func_call;

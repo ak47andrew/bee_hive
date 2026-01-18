@@ -276,8 +276,8 @@ def main():
         debug_mode = False
     
     if len(sys.argv) == 2:
-        with open(sys.argv[1], "r") as f:
-            interpreter = NJBrainfuckInterpreter(f.read(), debug_mode)
+        with open(sys.argv[1], "rb") as f:
+            interpreter = NJBrainfuckInterpreter(bytes(b for b in f.read() if b in b".,[]<>+-!#$").decode('ascii'), debug_mode)
         
         if debug_mode:
             debug(interpreter)
